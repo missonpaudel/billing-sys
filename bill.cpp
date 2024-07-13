@@ -1,23 +1,30 @@
 #include <iostream>
 #include <iomanip>
 
-struct choices{
-
+struct menuItem{
+std::string itemName;
+double price;
 };
 
-void showMenu();
+const int MENU_SIZE = 5;
+
+void showMenu(const menuItem menu[]);
 void order();
-void placeOrder(int item_num);
-double billgenerator(int item_num);
+void placeOrder(int item_num, double &total,const menuItem menu[] );
+double billgenerator(int item_num, const menuItem menu[]);
 
 int main()
 {
+    menuItem menu[MENU_SIZE] = {{"Burger" , 100.0}, 
+                                {"Pizza", 300.0},
+                                {"Momos", 150}, 
+                                {"Keema Noodles", 160.0}, {"shawarma", 180} };
 
 
     std::cout<< "       WELCOME      \n";
     std::cout<< "******************\n";
     std::cout << "Enter your order (enter the index number)\n";
-    showMenu();
+    showMenu(menu);
 
     int item_num;
     char choice;
@@ -28,10 +35,9 @@ int main()
         std::cin >> item_num;
         
         if (item_num == 0) break;
-        placeOrder(item_num);
+        placeOrder(item_num, total, menu);
         std::cout << "Do want to add another item to the order (y/n)";
         std::cin >> choice;
-        total += billgenerator(item_num);
 
     }while (choice == 'y' ||   choice == 'Y');
     std::cout << "\nYour total is Rs "<< std::setprecision(2) << std::fixed << total <<'\n';
@@ -40,48 +46,22 @@ int main()
 return 0;
 }
 
-void showMenu(){
-    std::cout << "1-Burger .................... 100\n";
-    std::cout << "2-Pizza ..................... 300\n";
-    std::cout << "3-Momos ..................... 150\n";
-    std::cout << "4-Keema noodles ............. 160\n";
-    std::cout << "5-Shawarma .................. 180\n";
-}
-void placeOrder(int item_num){ 
-    if (item_num < 1 || item_num > 5){
-        std::cout << "Invalid menu item \n";
+void showMenu(const menuItem menu[]){
+    for(int i = 0; i < MENU_SIZE; i++){
+        std::cout << i + 1 << "-" << menu[i].itemName << " .................... " << menu[i].price << '\n';
     }
-    switch(item_num)
-    {case 1: std::cout << "Addded burger to the order\n";
-        billgenerator(item_num);
-        break;
-    case 2: std::cout << "Addded pizza to the order\n";
-        billgenerator(item_num);
-        break;
-    case 3: std::cout << "Addded momos to the order \n";
-        billgenerator(item_num);
-        break;
-    case 4: std::cout << "Addded keema noodles to the order\n";
-        break;
-    case 5: std::cout << "Addded shawarma to the order\n";
-        break;
-        }
 }
-double billgenerator(int item_num){
+void placeOrder(int item_num, double &total,const menuItem menu[] ){ 
+    if (item_num < 1 || item_num > MENU_SIZE){
+        std::cout << "Invalid menu item \n";
+        return;
+    }
+    std::cout << "Added " << menu[item_num - 1].itemName << " to the order\n";
+    total += billgenerator(item_num, menu);
+}
+double billgenerator(int item_num, const menuItem menu[]){
     if (item_num < 1 || item_num > 5){
         return 0;
     }
-    
-    switch(item_num)
-    {case 1: return 100;
-            break;
-    case 2: return 300;
-            break;
-    case 3: return 150;
-            break;
-    case 4: return 160;
-            break;
-    case 5: return 180;
-            break;
-        }
+    return menu[item_num - 1].price;
 }
